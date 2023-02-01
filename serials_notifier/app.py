@@ -1,4 +1,3 @@
-from manage_series import notify_subs
 from manage_series import notify_series
 import os
 import telebot
@@ -18,9 +17,6 @@ class Notifier:
         self.__bot_token = bot_token
         self._scheduler = BackgroundScheduler()
         self._bot = telebot.TeleBot(self.__bot_token, parse_mode=None)
-
-    def _mon_subs(self) -> None:
-        self._bot.send_message(self.__my_id, text=notify_subs(self.__api_key))
 
     def _mon_series(self) -> None:
         self._bot.send_message(

@@ -1,5 +1,4 @@
 from manage_subscriptions import notify_subs
-from manage_series import notify_series
 import os
 import telebot
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -21,10 +20,6 @@ class Notifier:
 
     def _mon_subs(self) -> None:
         self._bot.send_message(self.__my_id, text=notify_subs(self.__api_key))
-
-    def _mon_series(self) -> None:
-        self._bot.send_message(
-            self.__my_id, text=notify_series(self.__api_key))
 
     def start_mon(self, hour: int = 9, minute: str = "00") -> None:
         self._subs_job = self._scheduler.add_job(
