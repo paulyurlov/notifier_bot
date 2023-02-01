@@ -3,11 +3,16 @@ import os
 import telebot
 from apscheduler.schedulers.background import BackgroundScheduler
 from time import sleep
+import logging
 
 
 API_KEY = os.environ['API_SECRET']
 BOT_TOKEN = os.environ['BOT_TOKEN']
 MY_ID = os.environ['MY_ID']
+
+
+logging.basicConfig(level=logging.INFO,
+                    format="%(asctime)s %(levelname)s %(message)s")
 
 
 class Notifier:
@@ -22,12 +27,15 @@ class Notifier:
         self._bot.send_message(self.__my_id, text=notify_subs(self.__api_key))
 
     def start_mon(self, hour: int = 9, minute: str = "00") -> None:
+        logging.info(f"Added cron job everyday on {hour}:{minute}")
         self._subs_job = self._scheduler.add_job(
             self._mon_subs, 'cron', hour=hour, minute=minute)
         self._scheduler.start()
+        logging.info("Starting monitoring")
         while True:
             sleep(1)
 
 
 nt = Notifier(API_KEY, MY_ID, BOT_TOKEN)
+logging.info("Notifier is up")
 nt.start_mon()
