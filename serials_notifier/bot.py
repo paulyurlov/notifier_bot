@@ -3,10 +3,14 @@ import os
 
 from aiogram import Bot, Dispatcher, executor, types
 from manage_series import series_notion
+from dotenv import load_dotenv
 
 
 import asyncio
 import aioschedule
+
+
+load_dotenv()
 
 
 API_KEY = os.environ['API_SECRET']
@@ -22,7 +26,7 @@ START_MESSAGE = "Прив =) ! Мои команды: \n\
 \n/next_week - узнать какие сериалы выходят на следующей неделе"\
 
 
-series_manager = series_notion(DB_ID, API_KEY)
+series_manager = series_notion()
 
 
 bot = Bot(token=BOT_TOKEN)
@@ -78,7 +82,7 @@ async def notify_sched() -> None:
 
 
 async def scheduler() -> None:
-    aioschedule.every().day.at("11:20").do(notify_sched)
+    aioschedule.every().day.at("11:30").do(notify_sched)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)

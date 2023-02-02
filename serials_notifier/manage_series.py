@@ -1,27 +1,32 @@
 import requests
 from datetime import datetime, timedelta, date
 from typing import Tuple
+import os
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+API_KEY = os.environ['API_SECRET']
+DB_ID = os.environ['SERIES_ID']
+
+
+NUM_TO_DAY = {
+    1: "в понедельник",
+    2: "во вторник",
+    3: "в среду",
+    4: "в четверг",
+    5: "в пятницу",
+    6: "в субботу",
+    7: "в воскресенье"
+}
 
 
 class series_notion:
-    def __init__(self, db_id: str, api_key: str) -> None:
-        """_summary_
-
-        Args:
-            db_id (str): Series database id
-            api_key (str): Notion api token
-        """
-        self.db_id = db_id
-        self.api_key = api_key
-        self.num_to_day = {
-            1: "в понедельник",
-            2: "во вторник",
-            3: "в среду",
-            4: "в четверг",
-            5: "в пятницу",
-            6: "в субботу",
-            7: "в воскресенье"
-        }
+    def __init__(self) -> None:
+        pass
 
     @staticmethod
     def find_next(date_started):
@@ -108,12 +113,12 @@ class series_notion:
             list: Returns list of series from series database
         """
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {API_KEY}",
             'Content-Type': 'application/json',
             'Notion-Version': '2022-06-28'
         }
         search_response = requests.post(
-            f'https://api.notion.com/v1/databases/{self.db_id}/query', headers=headers)
+            f'https://api.notion.com/v1/databases/{DB_ID}/query', headers=headers)
         return self.extract_data(search_response.json())
 
     @classmethod
@@ -126,7 +131,7 @@ class series_notion:
             new_date (date): New release date to be set for serie by its id
         """
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {API_KEY}",
             'Content-Type': 'application/json',
             'Notion-Version': '2022-06-28'
         }
@@ -228,17 +233,17 @@ class series_notion:
             if el["if_finished"] == "Нет" and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
                 tmp_day = datetime.strptime(
                     el["next_serie_date"], "%Y-%m-%d").isoweekday()
-                text += f"{space}{el['name']} выходит {self.num_to_day[tmp_day]}\n"
+                text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
                 if_any = True
             elif el["if_finished"] == "Нет" and ((datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() + timedelta(days=7)) <= sun) and ((datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() + timedelta(days=7)) >= mon):
                 tmp_day = datetime.strptime(
                     el["next_serie_date"], "%Y-%m-%d").isoweekday()
-                text += f"{space}{el['name']} выходит {self.num_to_day[tmp_day]}\n"
+                text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
                 if_any = True
             elif el["if_finished"] == "Нет" and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() >= mon):
                 tmp_day = datetime.strptime(
                     el["release_date"], "%Y-%m-%d").isoweekday()
-                text += f"{space}{el['name']} выходит {self.num_to_day[tmp_day]}\n"
+                text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
                 if_any = True
         if if_any:
             return text
@@ -266,7 +271,7 @@ class series_notion:
                 if datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() < datetime.today().date():
                     tmp_day = datetime.strptime(
                         el["next_serie_date"], "%Y-%m-%d").isoweekday()
-                    already_text += f"{space}{el['name']} вышел {self.num_to_day[tmp_day]}\n"
+                    already_text += f"{space}{el['name']} вышел {NUM_TO_DAY[tmp_day]}\n"
                     if_any = True
                     if_already = True
                 elif datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() == datetime.today().date():
@@ -277,13 +282,13 @@ class series_notion:
                 else:
                     tmp_day = datetime.strptime(
                         el["next_serie_date"], "%Y-%m-%d").isoweekday()
-                    text += f"{space}{el['name']} выходит {self.num_to_day[tmp_day]}\n"
+                    text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
                     if_any = True
             elif el["if_finished"] == "Нет" and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() >= mon):
                 if datetime.strptime(el["release_date"], "%Y-%m-%d").date() < datetime.today().date():
                     tmp_day = datetime.strptime(
                         el["release_date"], "%Y-%m-%d").isoweekday()
-                    already_text += f"{space}{el['name']} вышел {self.num_to_day[tmp_day]}\n"
+                    already_text += f"{space}{el['name']} вышел {NUM_TO_DAY[tmp_day]}\n"
                     if_any = True
                     if_already = True
                 elif datetime.strptime(el["release_date"], "%Y-%m-%d").date() == datetime.today().date():
@@ -294,7 +299,7 @@ class series_notion:
                 else:
                     tmp_day = datetime.strptime(
                         el["release_date"], "%Y-%m-%d").isoweekday()
-                    text += f"{space}{el['name']} выходит {self.num_to_day[tmp_day]}\n"
+                    text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
                     if_any = True
         if if_any:
             if if_already:
