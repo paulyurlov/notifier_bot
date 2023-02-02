@@ -3,14 +3,10 @@ import os
 
 from aiogram import Bot, Dispatcher, executor, types
 from manage_series import series_notion
-from dotenv import load_dotenv
 
 
 import asyncio
 import aioschedule
-
-
-load_dotenv()
 
 
 API_KEY = os.environ['API_SECRET']

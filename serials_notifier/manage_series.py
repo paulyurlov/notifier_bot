@@ -3,11 +3,6 @@ from datetime import datetime, timedelta, date
 from typing import Tuple
 import os
 
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
 
 API_KEY = os.environ['API_SECRET']
 DB_ID = os.environ['SERIES_ID']
