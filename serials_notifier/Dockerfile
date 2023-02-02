@@ -7,4 +7,6 @@ RUN pip3 install aiogram aioschedule asyncio requests
 
 COPY . .
 
+ENV TZ="Europe/Moscow"
+
 CMD [ "python3", "bot.py"]

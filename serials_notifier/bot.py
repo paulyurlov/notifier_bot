@@ -36,14 +36,14 @@ logging.basicConfig(level=logging.INFO,
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
     logging.info("Triggered /start or /help command")
-    if message.from_user.id == MY_ID:
+    if message.from_user.id == int(MY_ID):
         await bot.send_message(message.from_user.id, f"{START_MESSAGE}")
 
 
 @dp.message_handler(commands=['today'])
 async def send_today(message: types.Message):
     logging.info("Triggered /today command")
-    if message.from_user.id == MY_ID:
+    if message.from_user.id == int(MY_ID):
         await bot.send_message(message.from_user.id,
                                text=series_manager.notify_series_today())
 
@@ -51,14 +51,14 @@ async def send_today(message: types.Message):
 @dp.message_handler(commands=['tommorow'])
 async def send_tommorow(message: types.Message):
     logging.info("Triggered /tommorow command")
-    if message.from_user.id == MY_ID:
+    if message.from_user.id == int(MY_ID):
         await bot.send_message(message.from_user.id,
                                text=series_manager.notify_series_tommorow())
 
 
 @dp.message_handler(commands=['next_week'])
 async def send_next_week(message: types.Message):
-    if message.from_user.id == MY_ID:
+    if message.from_user.id == int(MY_ID):
         logging.info("Triggered /next_week command")
         await bot.send_message(message.from_user.id,
                                text=series_manager.notify_series_next_week())
@@ -66,7 +66,7 @@ async def send_next_week(message: types.Message):
 
 @dp.message_handler(commands=['this_week'])
 async def send_this_week(message: types.Message):
-    if message.from_user.id == MY_ID:
+    if message.from_user.id == int(MY_ID):
         logging.info("Triggered /this_week command")
         await bot.send_message(message.from_user.id,
                                text=series_manager.notify_series_this_week())
@@ -74,11 +74,11 @@ async def send_this_week(message: types.Message):
 
 async def notify_sched() -> None:
     logging.info("Triggered scheduled job command")
-    await bot.send_message(MY_ID, text=series_manager.notify_series_today())
+    await bot.send_message(int(MY_ID), text=series_manager.notify_series_today())
 
 
 async def scheduler() -> None:
-    aioschedule.every().day.at("11:15").do(notify_sched)
+    aioschedule.every().day.at("11:20").do(notify_sched)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
