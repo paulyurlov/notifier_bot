@@ -175,7 +175,7 @@ class series_notion:
         text = f"#Сериалы \n\nСегодня выходят следующие сериалы:\n\n"
         space = "  "
         if_any = False
-        for el in sorted(self.get_series(), key=lambda serie: datetime.strptime(serie["next_serie_date"], "%Y-%m-%d").date()):
+        for el in self.get_series():
             if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() == datetime.today().date():
                 text += f"{space}{el['name']} \n"
                 if_any = True
@@ -199,7 +199,7 @@ class series_notion:
         text = f"#Сериалы \n\nЗавтра выходят следующие сериалы:\n\n"
         space = "  "
         if_any = False
-        for el in sorted(self.get_series(), key=lambda serie: datetime.strptime(serie["next_serie_date"], "%Y-%m-%d").date()):
+        for el in self.get_series():
             if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d") - timedelta(days=1)).date() == datetime.today().date():
                 text += f"{space}{el['name']} \n"
                 if_any = True
@@ -224,7 +224,7 @@ class series_notion:
         space = "  "
         if_any = False
         mon, sun = self.get_next_week()
-        for el in sorted(self.get_series(), key=lambda serie: datetime.strptime(serie["next_serie_date"], "%Y-%m-%d").date()):
+        for el in self.get_series():
             if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
                 tmp_day = datetime.strptime(
                     el["next_serie_date"], "%Y-%m-%d").isoweekday()
