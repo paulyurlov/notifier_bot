@@ -163,6 +163,25 @@ class series_notion:
                 continue
 
     @classmethod
+    def get_sorted_series(self) -> list:
+        """_summary_
+
+        Returns sorted series by date
+
+        """
+        ret = list()
+        data = self.get_series()
+        for el in data:
+            if el["next_serie_date"] is not None:
+                ret.append(el)
+            elif el["release_date"] is not None:
+                ret.append(el)
+            else:
+                continue
+
+        return sorted(ret, key=lambda el: el["next_serie_date"] if el["next_serie_date"] is not None else el["release_date"])
+
+    @classmethod
     def notify_series_today(self) -> str:
         """_summary_
 
@@ -175,7 +194,7 @@ class series_notion:
         text = f"#Сериалы \n\nСегодня выходят следующие сериалы:\n\n"
         space = "  "
         if_any = False
-        for el in self.get_series():
+        for el in self.get_sorted_series():
             if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() == datetime.today().date():
                 text += f"{space}{el['name']} \n"
                 if_any = True
@@ -199,7 +218,7 @@ class series_notion:
         text = f"#Сериалы \n\nЗавтра выходят следующие сериалы:\n\n"
         space = "  "
         if_any = False
-        for el in self.get_series():
+        for el in self.get_sorted_series():
             if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d") - timedelta(days=1)).date() == datetime.today().date():
                 text += f"{space}{el['name']} \n"
                 if_any = True
@@ -224,7 +243,7 @@ class series_notion:
         space = "  "
         if_any = False
         mon, sun = self.get_next_week()
-        for el in self.get_series():
+        for el in self.get_sorted_series():
             if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
                 tmp_day = datetime.strptime(
                     el["next_serie_date"], "%Y-%m-%d").isoweekday()
@@ -261,7 +280,7 @@ class series_notion:
         if_any = False
         if_already = False
         mon, sun = self.get_this_week()
-        for el in self.get_series():
+        for el in self.get_sorted_series():
             if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
                 if datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() < datetime.today().date():
                     tmp_day = datetime.strptime(
