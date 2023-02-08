@@ -153,10 +153,10 @@ class series_notion:
         """
         data = self.get_series()
         for el in data:
-            if el["next_serie_date"] is None and el["release_date"] is not None and el["if_finished"] == "Нет":
+            if el["next_serie_date"] is None and el["status"] == 'Смотрю' and el["release_date"] is not None and el["if_finished"] == "Нет":
                 self.update_serie_date(
                     el["id"], self.find_next(el["release_date"]))
-            elif el["if_finished"] == "Нет" and el["release_date"] is not None and datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() < datetime.today().date():
+            elif el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and el["release_date"] is not None and datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() < datetime.today().date():
                 self.update_serie_date(
                     el["id"], self.find_next(el["release_date"]))
             else:
