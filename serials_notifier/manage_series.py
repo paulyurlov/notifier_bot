@@ -153,10 +153,10 @@ class series_notion:
         """
         data = self.get_series()
         for el in data:
-            if el["next_serie_date"] is None and el["if_finished"] == "Нет":
+            if el["next_serie_date"] is None and el["release_date"] is not None and el["if_finished"] == "Нет":
                 self.update_serie_date(
                     el["id"], self.find_next(el["release_date"]))
-            elif el["if_finished"] == "Нет" and datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() < datetime.today().date():
+            elif el["if_finished"] == "Нет" and el["release_date"] is not None and datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() < datetime.today().date():
                 self.update_serie_date(
                     el["id"], self.find_next(el["release_date"]))
             else:
@@ -176,10 +176,10 @@ class series_notion:
         space = "  "
         if_any = False
         for el in self.get_series():
-            if el["if_finished"] == "Нет" and datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() == datetime.today().date():
+            if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() == datetime.today().date():
                 text += f"{space}{el['name']} \n"
                 if_any = True
-            elif el["if_finished"] == "Нет" and datetime.strptime(el["release_date"], "%Y-%m-%d").date() == datetime.today().date():
+            elif el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and datetime.strptime(el["release_date"], "%Y-%m-%d").date() == datetime.today().date():
                 text += f"{space}{el['name']} \n"
                 if_any = True
         if if_any:
@@ -200,10 +200,10 @@ class series_notion:
         space = "  "
         if_any = False
         for el in self.get_series():
-            if el["if_finished"] == "Нет" and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d") - timedelta(days=1)).date() == datetime.today().date():
+            if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d") - timedelta(days=1)).date() == datetime.today().date():
                 text += f"{space}{el['name']} \n"
                 if_any = True
-            elif el["if_finished"] == "Нет" and (datetime.strptime(el["release_date"], "%Y-%m-%d") - timedelta(days=1)).date() == datetime.today().date():
+            elif el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["release_date"], "%Y-%m-%d") - timedelta(days=1)).date() == datetime.today().date():
                 text += f"{space}{el['name']} \n"
                 if_any = True
         if if_any:
@@ -225,17 +225,17 @@ class series_notion:
         if_any = False
         mon, sun = self.get_next_week()
         for el in self.get_series():
-            if el["if_finished"] == "Нет" and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
+            if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
                 tmp_day = datetime.strptime(
                     el["next_serie_date"], "%Y-%m-%d").isoweekday()
                 text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
                 if_any = True
-            elif el["if_finished"] == "Нет" and ((datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() + timedelta(days=7)) <= sun) and ((datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() + timedelta(days=7)) >= mon):
+            elif el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and ((datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() + timedelta(days=7)) <= sun) and ((datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() + timedelta(days=7)) >= mon):
                 tmp_day = datetime.strptime(
                     el["next_serie_date"], "%Y-%m-%d").isoweekday()
                 text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
                 if_any = True
-            elif el["if_finished"] == "Нет" and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() >= mon):
+            elif el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() >= mon):
                 tmp_day = datetime.strptime(
                     el["release_date"], "%Y-%m-%d").isoweekday()
                 text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
@@ -262,7 +262,7 @@ class series_notion:
         if_already = False
         mon, sun = self.get_this_week()
         for el in self.get_series():
-            if el["if_finished"] == "Нет" and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
+            if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
                 if datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() < datetime.today().date():
                     tmp_day = datetime.strptime(
                         el["next_serie_date"], "%Y-%m-%d").isoweekday()
@@ -279,7 +279,7 @@ class series_notion:
                         el["next_serie_date"], "%Y-%m-%d").isoweekday()
                     text += f"{space}{el['name']} выходит {NUM_TO_DAY[tmp_day]}\n"
                     if_any = True
-            elif el["if_finished"] == "Нет" and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() >= mon):
+            elif el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["release_date"], "%Y-%m-%d").date() >= mon):
                 if datetime.strptime(el["release_date"], "%Y-%m-%d").date() < datetime.today().date():
                     tmp_day = datetime.strptime(
                         el["release_date"], "%Y-%m-%d").isoweekday()
