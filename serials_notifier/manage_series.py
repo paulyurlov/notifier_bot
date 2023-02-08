@@ -179,7 +179,7 @@ class series_notion:
             else:
                 continue
 
-        return sorted(ret, key=lambda el: el["next_serie_date"] if el["next_serie_date"] is not None else el["release_date"])
+        return sorted(ret, key=lambda el: datetime.strptime(el["next_serie_date"], "%Y-%m-%d").weekday() if el["next_serie_date"] is not None else datetime.strptime(el["release_date"], "%Y-%m-%d").weekday())
 
     @classmethod
     def notify_series_today(self) -> str:
