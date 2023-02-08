@@ -282,7 +282,7 @@ class series_notion:
         mon, sun = self.get_this_week()
         for el in self.get_sorted_series():
             if el["if_finished"] == "Нет" and el["status"] == 'Смотрю' and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() >= mon):
-                if datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() - timedelta(days=7) < datetime.today().date() and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() - timedelta(days=7) <= sun) and (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() - timedelta(days=7) >= mon):
+                if (datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() - timedelta(days=7)) < datetime.today().date() and ((datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() - timedelta(days=7)) <= sun) and ((datetime.strptime(el["next_serie_date"], "%Y-%m-%d").date() - timedelta(days=7)) >= mon):
                     tmp_day = datetime.strptime(
                         el["next_serie_date"], "%Y-%m-%d").isoweekday()
                     already_text += f"{space}{el['name']} вышел {NUM_TO_DAY[tmp_day]}\n"
