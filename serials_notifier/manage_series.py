@@ -339,7 +339,10 @@ class series_notion:
             try:
                 if el['status'] == 'Хочу посмотреть':
                     try:
-                        ser = f"{el['name']} выходит {el['release_date']} \n"
+                        if el['release_date'] is None:
+                            ser = f"{el['name']} дата выхода не известна или он уже вышел \n"
+                        else:
+                            ser = f"{el['name']} выходит {el['release_date']} \n"
                     except:
                         ser = f"{el['name']} дата выхода не известна или он уже вышел \n"
             except:
