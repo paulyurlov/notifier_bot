@@ -19,7 +19,7 @@ START_MESSAGE = "Прив =) ! Мои команды: \n\
 \n/today - узнать какие сериалы выходят сегодня\
 \n/tommorow - узнать какие сериалы выходят завтра\
 \n/this_week - узнать какие сериалы выходят на этой неделе\
-\n/next_week - узнать какие сериалы выходят на следующей неделе"\
+\n/next_week - узнать какие сериалы выходят на следующей неделе"
 
 
 series_manager = series_notion()
@@ -70,6 +70,14 @@ async def send_this_week(message: types.Message):
         logging.info("Triggered /this_week command")
         await bot.send_message(message.from_user.id,
                                text=series_manager.notify_series_this_week())
+
+
+@dp.message_handler(commands=['wanted'])
+async def send_wanted_list(message: types.Message):
+    if message.from_user.id == int(MY_ID):
+        logging.info("Triggered /wanted command")
+        await bot.send_message(message.from_user.id,
+                               text=series_manager.list_wanted())
 
 
 async def notify_sched() -> None:

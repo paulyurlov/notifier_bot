@@ -320,3 +320,29 @@ class series_notion:
                 return intro + already_text + "\n\n" + text
             return intro + text
         return "На этой неделе ничего не выходит =("
+
+    @classmethod
+    def list_wanted(self) -> str:
+        """_summary_
+
+        Creates notification string for series that come out this week
+
+        Returns:
+            str: notification string for series that come out this week
+        """
+        self.check_next_date()
+        intro = "#Сериалы \n\n"
+        text = f"Вот ожидаемые сериалы:\n\n"
+        space = "  "
+        for el in self.get_series():
+            ser = ''
+            try:
+                if el['status'] == 'Хочу посмотреть':
+                    try:
+                        ser = f"{el['name']} выходит {el['release_date']} \n"
+                    except:
+                        ser = f"{el['name']} дата выхода не известна или он уже вышел \n"
+            except:
+                continue
+            text += space + ser
+        return intro + text
