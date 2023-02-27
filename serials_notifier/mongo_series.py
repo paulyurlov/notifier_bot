@@ -191,9 +191,9 @@ class SeriesMongo:
             if (item['next_serie_date'] < self.today()) or ((item['next_serie_date'] - timedelta(days=7) < self.today()) and item['next_serie_date'] - timedelta(days=7) > mon):
                 already_text += f"{space}{item['name']} вышел {NUM_TO_DAY[item['next_serie_date'].isoweekday()]}\n"
                 if_already = True
-            elif item['next_serie_date'].date() == self.today().date():
+            elif item['next_serie_date'] == self.today():
                 text += f"{space}{item['name']} выходит сегодня\n"
-            elif item['next_serie_date'].date() > self.today().date() and item['next_serie_date'].date() <= sun:
+            elif item['next_serie_date'] > self.today() and item['next_serie_date'] <= sun:
                 text += f"{space}{item['name']} выходит {NUM_TO_DAY[item['next_serie_date'].isoweekday()]}\n"
         if if_already:
             return intro + already_text + "\n\n" + text
