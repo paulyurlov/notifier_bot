@@ -122,7 +122,9 @@ async def scheduler() -> None:
     """
     aioschedule.every().day.at("11:30").do(notify_sched)
     aioschedule.every().day.at("20:30").do(notify_sched)
-    aioschedule.every().hour.do(update_dbs)
+    aioschedule.every().day.at("00:00").do(update_dbs)
+    aioschedule.every().day.at("03:00").do(update_dbs)
+    aioschedule.every().day.at("07:00").do(update_dbs)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)

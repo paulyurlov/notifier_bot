@@ -3,3 +3,7 @@ __pycache__
 test.py
 schedule_notifier
 serials_notifier/manage_series_old.py
+serials_notifier/tmp.ipynb
+serials_notifier/backup.csv
+serials_notifier/Anixart_Bookmarks.csv
+serials_notifier/.ipynb_checkpoints
