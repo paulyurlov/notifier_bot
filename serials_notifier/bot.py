@@ -97,7 +97,7 @@ async def send_wanted_list(message: types.Message):
         logging.info("Triggered /update command")
         await bot.send_message(message.from_user.id,
                                text='Запущен процесс обновления баз данных')
-        updater.update_and_sync()
+        updater.update_dates()
 
 
 async def notify_sched() -> None:
