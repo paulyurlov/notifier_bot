@@ -2,4 +2,4 @@ __pycache__
 .env
 test.py
 schedule_notifier
-serials_notifier/manage_series.py
+serials_notifier/manage_series_old.py

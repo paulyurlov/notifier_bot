@@ -32,7 +32,7 @@ dp = Dispatcher(bot)
 
 
 # Init series MongoDB
-series_db = SeriesMongo()
+series_db = SeriesMongo(CON_STRING)
 
 
 # Init updater
