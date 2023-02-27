@@ -91,7 +91,7 @@ class SeriesMongo:
         space = "  "
 
         cursor = self.db.find(
-            {'status': {"$in": ['Смотрю', 'Хочу посмотреть']}, 'next_serie_date': {"$eq": self.today()}}).sort("next_serie_date", pymongo.ASCENDING)
+            {'status': 'Смотрю', 'next_serie_date': {"$eq": self.today()}}).sort("next_serie_date", pymongo.ASCENDING)
 
         list_series = list(cursor)
         if len(list_series) == 0:
@@ -122,7 +122,7 @@ class SeriesMongo:
         space = "  "
 
         cursor = self.db.find(
-            {'status': {"$in": ['Смотрю', 'Хочу посмотреть']}, 'next_serie_date': {"$eq": self.today() + timedelta(days=1)}}).sort("next_serie_date", pymongo.ASCENDING)
+            {'status': 'Смотрю', 'next_serie_date': {"$eq": self.today() + timedelta(days=1)}}).sort("next_serie_date", pymongo.ASCENDING)
 
         list_series = list(cursor)
 
@@ -147,7 +147,7 @@ class SeriesMongo:
 
         mon, sun = self.next_week()
         cursor = self.db.find(
-            {'status': {"$in": ('Смотрю', 'Хочу посмотреть')}, 'next_serie_date': {"$gte": mon, "$lte": sun}}).sort("next_serie_date", pymongo.ASCENDING)
+            {'status': 'Смотрю', 'next_serie_date': {"$gte": mon, "$lte": sun}}).sort("next_serie_date", pymongo.ASCENDING)
 
         list_series = list(cursor)
 
@@ -175,7 +175,7 @@ class SeriesMongo:
 
         mon, sun = self.this_week()
         cursor = self.db.find({"$and": [
-            {'status': {"$in": ['Смотрю', 'Хочу посмотреть']}},
+            {'status': 'Смотрю'},
             {"$or": [
                 {'next_serie_date': {"$gte": mon, "$lte": sun}},
                 {'$and': [
