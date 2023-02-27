@@ -208,14 +208,14 @@ class Updater:
         """
 
         series = list(self.db.find({'next_serie_date': {
-                      "$lt": datetime.combine(datetime.now().date(), time(0, 0, 0))}}))
+                      "$lt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'is_finished': {'$ne': 'Да'}}))
 
         for serie in series:
             self.db.update_one({'_id': serie['_id']}, {
                                '$set': {'next_serie_date': self.find_next(serie['next_serie_date'])}})
 
         series = list(self.db.find({'date_release': {
-                      "$gt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'next_serie_date': None}))
+                      "$gt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'next_serie_date': None, 'is_finished': {'$ne': 'Да'}}))
 
         for serie in series:
             self.db.update_one({'_id': serie['_id']}, {
