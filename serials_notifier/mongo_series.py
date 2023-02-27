@@ -193,7 +193,7 @@ class SeriesMongo:
             return "На этой неделе ничего не выходит =("
 
         for item in list_series:
-            if (item['next_serie_date'].date() < self.today().date()) or ((item['next_serie_date'].date() > self.today().date()) and (item['next_serie_date'].date() < (self.today().date() + timedelta(days=7)))):
+            if (item['next_serie_date'] < self.today()) or (item['next_serie_date'] < (self.today() + timedelta(days=7))):
                 already_text += f"{space}{item['name']} вышел {NUM_TO_DAY[item['next_serie_date'].isoweekday()]}\n"
                 if_already = True
             elif item['next_serie_date'].date() == self.today().date():
