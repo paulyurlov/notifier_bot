@@ -178,13 +178,8 @@ class SeriesMongo:
             {'status': 'Смотрю'},
             {"$or": [
                 {'next_serie_date': {"$gte": mon, "$lte": sun}},
-                {'$and': [
-                    {'next_serie_date': {
-                        "$gte": mon + timedelta(days=7), "$lt": self.today() + timedelta(days=7)}},
-                    {'date_release': {"$lte": self.today() + timedelta(days=7)}}
-                ]
-                }
-            ]}
+                {'next_serie_date': {
+                    "$gte": mon + timedelta(days=7), "$lt": self.today() + timedelta(days=7)}}]}
         ]}).sort("next_serie_date", pymongo.ASCENDING)
 
         list_series = list(cursor)
@@ -193,12 +188,12 @@ class SeriesMongo:
             return "На этой неделе ничего не выходит =("
 
         for item in list_series:
-            if (item['next_serie_date'] < self.today()) or (item['next_serie_date'] < (self.today() + timedelta(days=7))):
+            if (item['next_serie_date'] < self.today()) or ((item['next_serie_date'] - timedelta(days=7) < self.today()) and item['next_serie_date'] - timedelta(days=7) > mon):
                 already_text += f"{space}{item['name']} вышел {NUM_TO_DAY[item['next_serie_date'].isoweekday()]}\n"
                 if_already = True
             elif item['next_serie_date'].date() == self.today().date():
                 text += f"{space}{item['name']} выходит сегодня\n"
-            else:
+            elif item['next_serie_date'].date() > self.today().date() and item['next_serie_date'].date() <= sun:
                 text += f"{space}{item['name']} выходит {NUM_TO_DAY[item['next_serie_date'].isoweekday()]}\n"
         if if_already:
             return intro + already_text + "\n\n" + text
