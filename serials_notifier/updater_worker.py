@@ -219,7 +219,7 @@ class Updater:
 
         for serie in series:
             self.db.update_one({'_id': serie['_id']}, {
-                               '$set': {'next_serie_date': self.find_next(serie['next_serie_date'])}})
+                               '$set': {'next_serie_date': self.find_next(serie['date_release'])}})
 
         series = list(self.db.find({'date_release': {
                       "$gt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'next_serie_date': None, 'is_finished': {'$ne': 'Да'}}))
