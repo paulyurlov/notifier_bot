@@ -215,11 +215,18 @@ class Updater:
                                '$set': {'next_serie_date': self.find_next(serie['next_serie_date'])}})
 
         series = list(self.db.find({'date_release': {
+                      "$lt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'next_serie_date': None, 'is_finished': {'$ne': 'Да'}}))
+
+        for serie in series:
+            self.db.update_one({'_id': serie['_id']}, {
+                               '$set': {'next_serie_date': self.find_next(serie['next_serie_date'])}})
+
+        series = list(self.db.find({'date_release': {
                       "$gt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'next_serie_date': None, 'is_finished': {'$ne': 'Да'}}))
 
         for serie in series:
             self.db.update_one({'_id': serie['_id']}, {
-                               '$set': {'next_serie_date': self.find_next(serie['date_release'])}})
+                               '$set': {'next_serie_date': serie['date_release']}})
 
         all_ser_notion = self.notion_db.get_series()
 
