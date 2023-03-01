@@ -138,7 +138,7 @@ class Updater:
         else:
             logging.warning(f"Something went wrong got response {res}")
 
-    def update_serie_date(self, serie_id: str, old_date: datetime) -> None:
+    def update_serie_date(self, serie_id: str, release_date: datetime, old_date: datetime) -> None:
         """
         Updates next serie release date
 
@@ -146,11 +146,11 @@ class Updater:
             serie_id (str): series id in notion db
             old_date (datetime): series old next serie date
         """
-        if old_date is None:
+        if release_date is None:
             return None
         new_date = old_date
         if old_date < datetime.today():
-            new_date = self.find_next(old_date)
+            new_date = self.find_next(release_date)
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -221,7 +221,8 @@ class Updater:
 
         for el in all_ser_notion:
             if el["is_finished"] == "Нет" and el["status"] == 'Смотрю':
-                self.update_serie_date(el['_id'], el["next_serie_date"])
+                self.update_serie_date(
+                    el['_id'], el["next_serie_date"], el["date_release"])
 
         self.notion_to_mongo()
         logging.info("Finished updating and syncing \n\n")
