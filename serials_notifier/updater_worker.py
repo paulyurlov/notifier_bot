@@ -146,6 +146,8 @@ class Updater:
             serie_id (str): series id in notion db
             old_date (datetime): series old next serie date
         """
+        if old_date is None:
+            return None
         new_date = old_date
         if old_date < datetime.today():
             new_date = self.find_next()
@@ -170,7 +172,7 @@ class Updater:
             f'https://api.notion.com/v1/pages/{serie_id}', headers=headers, json=data_to_upd)
 
         if str(res) == '<Response [200]>':
-            logging.info(f"Succesfully deleted page and got response {res}")
+            logging.info(f"Succesfully updated date and got response {res}")
         else:
             logging.warning(f"Something went wrong got response {res}")
 
