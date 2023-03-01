@@ -150,7 +150,7 @@ class Updater:
             return None
         new_date = old_date
         if old_date < datetime.today():
-            new_date = self.find_next()
+            new_date = self.find_next(old_date)
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
