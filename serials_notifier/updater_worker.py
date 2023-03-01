@@ -220,6 +220,8 @@ class Updater:
         all_ser_notion = self.notion_db.get_series()
 
         for el in all_ser_notion:
+            if el['name'].strip() == 'Авантюристы, которые не верят в человечество, спасут мир':
+                logging.info(f"hmmm {el}")
             if el["is_finished"] == "Нет" and el["status"] == 'Смотрю':
                 self.update_serie_date(
                     el['_id'], el["next_serie_date"], el["date_release"])
