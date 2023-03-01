@@ -218,11 +218,6 @@ class Updater:
         all_ser_notion = self.notion_db.get_series()
 
         for el in all_ser_notion:
-            self.del_one(el['_id'])
-
-        all_ser_mongo = list(self.db.find({}))
-
-        for el in all_ser_mongo:
             self.update_serie_date(el['_id'], el["next_serie_date"])
 
         self.notion_to_mongo()
