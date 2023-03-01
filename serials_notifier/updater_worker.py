@@ -138,7 +138,7 @@ class Updater:
         else:
             logging.warning(f"Something went wrong got response {res}")
 
-    def update_serie_date(self, serie_id: str, release_date: datetime, old_date: datetime) -> None:
+    def update_serie_date(self, serie_id: str, old_date: datetime, release_date: datetime) -> None:
         """
         Updates next serie release date
 
