@@ -138,6 +138,42 @@ class Updater:
         else:
             logging.warning(f"Something went wrong got response {res}")
 
+    def update_serie_date(self, serie_id: str, old_date: datetime) -> None:
+        """
+        Updates next serie release date
+
+        Args:
+            serie_id (str): series id in notion db
+            old_date (datetime): series old next serie date
+        """
+        new_date = old_date
+        if old_date < datetime.today():
+            new_date = self.find_next()
+
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            'Content-Type': 'application/json',
+            'Notion-Version': '2022-06-28'
+        }
+        data_to_upd = {
+            "properties": {
+                "Следующая серия выйдет": {
+                    "date": {
+                        "start": new_date.strftime('%Y-%m-%d'),
+                        "end": None,
+                        "time_zone": None
+                    }
+                }
+            }
+        }
+        res = requests.patch(
+            f'https://api.notion.com/v1/pages/{serie_id}', headers=headers, json=data_to_upd)
+
+        if str(res) == '<Response [200]>':
+            logging.info(f"Succesfully deleted page and got response {res}")
+        else:
+            logging.warning(f"Something went wrong got response {res}")
+
     def del_one(self, serie_id: str) -> None:
         """
         Updates serie based on id
@@ -158,48 +194,19 @@ class Updater:
         else:
             logging.warning(f"Something went wrong got response {res}")
 
-    def sync_db_intersect(self) -> None:
-        """
-        Sync databases but sync only elements that intersect
-        """
-
-        all_ser_mongo = list(self.db.find({}))
-
-        for el in all_ser_mongo:
-            del el['_id']
-
-        all_ser_notion = self.notion_db.get_series()
-
-        for el in all_ser_notion:
-            del el['_id']
-
-        all_names_mongo = [el['name'] for el in all_ser_mongo]
-        all_names_notion = [el['name'] for el in all_ser_notion]
-        intersect = [el for el in all_ser_notion if (
-            (el['name'] in all_names_mongo) and (el['name'] in all_names_notion))]
-        for el in intersect:
-            self.db.replace_one({'name': el['name']}, el)
-
     def notion_to_mongo(self) -> None:
         """
         Insert new data from notion to mongo
         """
-
-        all_ser_mongo = list(self.db.find({}))
-
-        for el in all_ser_mongo:
-            del el['_id']
+        self.db.drop()
+        self.db = self.mongo_client.series['series']
 
         all_ser_notion = self.notion_db.get_series()
 
         for el in all_ser_notion:
             del el['_id']
 
-        all_names_mongo = [el['name'] for el in all_ser_mongo]
-        all_names_notion = [el['name'] for el in all_ser_notion]
-        notion_new = [el for el in all_ser_notion if (
-            (el['name'] not in all_names_mongo) and (el['name'] in all_names_notion))]
-        for el in notion_new:
+        for el in all_ser_notion:
             self.db.insert_one(el)
 
     def update_dates(self) -> None:
@@ -207,27 +214,7 @@ class Updater:
         Update next serie dates
         """
 
-        series = list(self.db.find({'next_serie_date': {
-                      "$lt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'is_finished': {'$ne': 'Да'}}))
-
-        for serie in series:
-            self.db.update_one({'_id': serie['_id']}, {
-                               '$set': {'next_serie_date': self.find_next(serie['next_serie_date'])}})
-
-        series = list(self.db.find({'date_release': {
-                      "$lt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'next_serie_date': None, 'is_finished': {'$ne': 'Да'}}))
-
-        for serie in series:
-            self.db.update_one({'_id': serie['_id']}, {
-                               '$set': {'next_serie_date': self.find_next(serie['date_release'])}})
-
-        series = list(self.db.find({'date_release': {
-                      "$gt": datetime.combine(datetime.now().date(), time(0, 0, 0))}, 'next_serie_date': None, 'is_finished': {'$ne': 'Да'}}))
-
-        for serie in series:
-            self.db.update_one({'_id': serie['_id']}, {
-                               '$set': {'next_serie_date': serie['date_release']}})
-
+        logging.info("Started update_and_sync function \n\n")
         all_ser_notion = self.notion_db.get_series()
 
         for el in all_ser_notion:
@@ -236,18 +223,7 @@ class Updater:
         all_ser_mongo = list(self.db.find({}))
 
         for el in all_ser_mongo:
-            del el['_id']
+            self.update_serie_date(el['_id'], el["next_serie_date"])
 
-        for el in all_ser_mongo:
-            self.insert_one(el)
-
-    def update_and_sync(self) -> None:
-        """
-        Syncs databases and then updates dates
-        """
-
-        logging.info("Started update_and_sync function \n\n")
-        self.sync_db_intersect()
         self.notion_to_mongo()
-        self.update_dates()
         logging.info("Finished updating and syncing \n\n")
