@@ -220,7 +220,8 @@ class Updater:
         all_ser_notion = self.notion_db.get_series()
 
         for el in all_ser_notion:
-            self.update_serie_date(el['_id'], el["next_serie_date"])
+            if el["is_finished"] == "Нет" and el["status"] == 'Смотрю':
+                self.update_serie_date(el['_id'], el["next_serie_date"])
 
         self.notion_to_mongo()
         logging.info("Finished updating and syncing \n\n")
